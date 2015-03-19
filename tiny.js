@@ -95,7 +95,22 @@ function init() {
 }
 
 function blog() {
+  var config = JSON.parse(fs.readFileSync("./tiny.json"));
+  prompt.start();
+  prompt.get(["Post Title"], function(err, result) {
+    var title = result["Post Title"];
+    var fileId = title.replace(/ /g, "-")+".md";
 
+    config.posts.push({
+      title: title,
+      content: Import(fileId),
+      date: new Date()
+    });
+
+    fs.writeFileSync("./tiny.json", JSON.stringify(config));
+
+    require("child_process").spawn(process.env.EDITOR || 'vi', ["includes/"+fileId], {stdio: 'inherit'});
+  })
 }
 
 function publishPage(config, content) {
