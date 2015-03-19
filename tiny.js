@@ -74,6 +74,7 @@ function init() {
       creationDate: new Date(),
       header: Import("header.html"),
       footer: Import("footer.html"),
+      post: Import("post.html"),
       style: "includes/style.css",
       posts: [],
       raws: []
@@ -82,6 +83,7 @@ function init() {
     fs.mkdirSync("includes");
     fs.writeFileSync("includes/header.html", fs.readFileSync("default/header.html"));
     fs.writeFileSync("includes/footer.html", fs.readFileSync("default/footer.html"));
+    fs.writeFileSync("includes/post.html", fs.readFileSync("default/post.html"));
     fs.writeFileSync("includes/style.css", fs.readFileSync("default/style.css"));
 
     // setup git if necessary
@@ -99,21 +101,22 @@ function blog() {
   prompt.start();
   prompt.get(["Post Title"], function(err, result) {
     var title = result["Post Title"];
-    var fileId = title.replace(/ /g, "-")+".md";
+    var fileId = title.replace(/ /g, "-");
 
     config.posts.push({
       title: title,
-      content: Import(fileId),
+      fileId: fileId,
+      content: Import(fileId+".md"),
       date: new Date()
     });
 
     fs.writeFileSync("./tiny.json", JSON.stringify(config));
 
-    require("child_process").spawn(process.env.EDITOR || 'vi', ["includes/"+fileId], {stdio: 'inherit'});
+    require("child_process").spawn(process.env.EDITOR || 'vi', ["includes/"+fileId+".md"], {stdio: 'inherit'});
   })
 }
 
-function publishPage(config, content) {
+function publishPage(config, content, extras) {
   // a page is header + contnet + footer
   var page = Resolve(config.header) + Resolve(content) + Resolve(config.footer);
 
@@ -129,6 +132,12 @@ function publishPage(config, content) {
              .replace(/%%TINY_INCLUDES%%/g, includes)
              .replace(/%%TINY_LIFE%%/g, life);
 
+  Object.keys(extras).forEach(function(key) {
+    if(key[0] == "%") {
+      page = page.replace(new RegExp(key, "g"), extras[key]);
+    }
+  });
+
   return page;
 }
 
@@ -142,8 +151,19 @@ function publish() {
     }
   ];
 
+  configFile.posts.forEach(function(post) {
+    publishablePages.push(
+      {
+        "path": post.fileId+".html",
+        "content": configFile.post,
+        "%%TINY_POST_TITLE%%": post.title,
+        "%%TINY_POST_CONTENT%%": Resolve(post.content),
+        "%%TINY_POST_DATE%%": post.date
+      }
+    );
+  });
   publishablePages.forEach(function(page) {
-    fs.writeFileSync(page.path, publishPage(configFile, page.content));
+    fs.writeFileSync(page.path, publishPage(configFile, page.content, page));
   })
 }
 
