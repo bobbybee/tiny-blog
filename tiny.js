@@ -90,7 +90,7 @@ function init() {
     // setup git if necessary
     if(result["Git Remote"].length) {
       exec(
-        "git init . && git remote add origin "+result["Git Remote"],
+        "git init . && git remote add origin "+result["Git Remote"] + " && git push origin master",
         function(){} // does it matter at this point?
       );
     }
@@ -139,6 +139,13 @@ function publishPage(config, content, extras) {
     }
   });
 
+  if(config.gitRemote.length) {
+    exec(
+      "git add "+extras.path,
+      function(){} // does it matter at this point?
+    );
+  }
+
   return page;
 }
 
@@ -166,6 +173,16 @@ function publish() {
   publishablePages.forEach(function(page) {
     fs.writeFileSync(page.path, publishPage(configFile, page.content, page));
   })
+
+  if(config.gitRemote.length) {
+    prompt.start();
+    prompt.get(["Git Commit Message"], function(err, result) {
+      exec(
+        "git commit -m "+JSON.stringify(result["Git Commit Message"])+" && git push origin master",
+        function(){} // does it matter at this point?
+      );
+    })
+  }
 }
 
 // perform desired action
