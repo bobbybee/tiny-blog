@@ -14,7 +14,8 @@ usage:
 
 var fs = require('fs'),
     prompt = require('prompt'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    marked = require("marked");
 
 if(process.argv.length != 3) {
   console.error("tiny.js takes a single argument");
@@ -157,7 +158,7 @@ function publish() {
         "path": post.fileId+".html",
         "content": configFile.post,
         "%%TINY_POST_TITLE%%": post.title,
-        "%%TINY_POST_CONTENT%%": Resolve(post.content),
+        "%%TINY_POST_CONTENT%%": marked(Resolve(post.content).toString()),
         "%%TINY_POST_DATE%%": post.date
       }
     );
