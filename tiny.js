@@ -40,6 +40,18 @@ function Embed(content) {
   }
 }
 
+// reverses the above two functions
+function Resolve(content) {
+  if(content.type == "embed") {
+    return content.content;
+  } else if(content.type == "include") {
+    return fs.readFileSync("includes/"+content.path);
+  } else {
+    console.log("Unknown file type "+content.type);
+    return "";
+  }
+}
+
 function init() {
   // initializes blog in working directory
   // blogs have the following file structure:
@@ -59,17 +71,18 @@ function init() {
       blogName: result["Blog Name"],
       blogAuthor: result["Author"],
       gitRemote: result["Git Remote"],
+      creationDate: new Date(),
       header: Import("header.html"),
       footer: Import("footer.html"),
-      style: Import("styles.css"),
+      style: "includes/style.css",
       posts: [],
       raws: []
     }));
 
     fs.mkdirSync("includes");
-    fs.writeFileSync("header.html", fs.readFileSync("default/header.html"));
-    fs.writeFileSync("footer.html", fs.readFileSync("default/footer.html"));
-    fs.writeFileSync("styles.css", fs.readFileSync("default/styles.css"));
+    fs.writeFileSync("includes/header.html", fs.readFileSync("default/header.html"));
+    fs.writeFileSync("includes/footer.html", fs.readFileSync("default/footer.html"));
+    fs.writeFileSync("includes/style.css", fs.readFileSync("default/style.css"));
 
     // setup git if necessary
     if(result["Git Remote"].length) {
@@ -85,8 +98,38 @@ function blog() {
 
 }
 
-function publish() {
+function publishPage(config, content) {
+  // a page is header + contnet + footer
+  var page = Resolve(config.header) + Resolve(content) + Resolve(config.footer);
 
+  var includes = '<link rel="stylesheet" type="text/css" href="'+config.style+'"/>';
+
+  var startYear = (new Date(config.creationDate)).getFullYear();
+  var endYear = (new Date()).getFullYear();
+  var life = (startYear == endYear) ? startYear : startYear + "-" + endYear;
+
+  // resolve %%TINY_*%%
+  page = page.replace(/%%TINY_BLOG_NAME%%/g, config.blogName)
+             .replace(/%%TINY_BLOG_AUTHOR%%/g, config.blogAuthor)
+             .replace(/%%TINY_INCLUDES%%/g, includes)
+             .replace(/%%TINY_LIFE%%/g, life);
+
+  return page;
+}
+
+function publish() {
+  var configFile = JSON.parse(fs.readFileSync("tiny.json"));
+
+  var publishablePages = [
+    {
+      "path":"index.html",
+      "content": Embed("testing")
+    }
+  ];
+
+  publishablePages.forEach(function(page) {
+    fs.writeFileSync(page.path, publishPage(configFile, page.content));
+  })
 }
 
 // perform desired action
