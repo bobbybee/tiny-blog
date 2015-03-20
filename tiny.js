@@ -139,6 +139,23 @@ function publishPage(config, content, extras) {
     }
   });
 
+  if(page.indexOf('%%TINY_BEGIN_POST_ITERATION%%') > -1) {
+    var b = page.slice(page.indexOf('%%TINY_BEGIN_POST_ITERATION%%') + '%%TINY_BEGIN_POST_ITERATION%%'.length,
+      page.indexOf('%%TINY_END_POST_ITERATION%%'));
+
+    var iterated = "";
+    config.posts.forEach(function(post) {
+      var block = b.replace(/%%TINY_ITERATED_POST_TITLE%%/g, post.title)
+        .replace(/%%TINY_ITERATED_POST_DATE%%/g, new Date(post.date).toGMTString())
+        .replace(/%%TINY_ITERATED_POST_HREF%%/g, post.fileId+".html");
+      iterated += block;
+    });
+
+    page = page.slice(0, page.indexOf('%%TINY_BEGIN_POST_ITERATION%%'))
+    + iterated
+    + page.slice(page.indexOf('%%TINY_END_POST_ITERATION%%') + '%%TINY_END_POST_ITERATION%%'.length);
+  }
+
   if(config.gitRemote.length) {
     exec(
       "git add "+extras.path,
@@ -155,7 +172,7 @@ function publish() {
   var publishablePages = [
     {
       "path":"index.html",
-      "content": Embed("testing")
+      "content": configFile.index
     }
   ];
 
