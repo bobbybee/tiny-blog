@@ -174,7 +174,7 @@ function publish() {
     fs.writeFileSync(page.path, publishPage(configFile, page.content, page));
   })
 
-  if(config.gitRemote.length) {
+  if(configFile.gitRemote.length) {
     prompt.start();
     prompt.get(["Git Commit Message"], function(err, result) {
       exec(
