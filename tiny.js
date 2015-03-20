@@ -76,7 +76,7 @@ function init() {
       header: Import("header.html"),
       footer: Import("footer.html"),
       post: Import("post.html"),
-      index: Import("index.html")
+      index: Import("index.html"),
       style: "includes/style.css",
       posts: [],
       raws: []
