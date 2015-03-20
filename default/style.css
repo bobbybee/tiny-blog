@@ -1,6 +1,8 @@
 body {
   background-color: #EEE;
   font-family: "Lucida Console", Monaco, monospace;
+  margin-left: 5%;
+  overflow-x: hidden;
 }
 
 .header {
@@ -12,7 +14,6 @@ body {
   background-color: #CCC;
   font-size: 250%;
   text-align: center;
-  overflow: hidden;
 }
 
 .content {
@@ -26,6 +27,8 @@ body {
 }
 
 .post_info {
+  position: relative;
+  left: -5%;
   text-align: center;
 }
 
@@ -40,4 +43,7 @@ body {
 .footer {
   font-size: 80%;
   text-align: right;
+  position: relative;
+  left: -5%;
+  overflow: hidden;
 }
