@@ -2,6 +2,7 @@ body {
   background-color: #EEE;
   font-family: "Lucida Console", Monaco, monospace;
   margin-left: 5%;
+  margin-right: 5%;
   overflow-x: hidden;
 }
 
@@ -19,7 +20,7 @@ body {
 .content {
   position: absolute;
   top: 10%;
-  width: 100%;
+  width: 95%;
 }
 
 .post_title {
