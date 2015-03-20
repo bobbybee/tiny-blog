@@ -26,6 +26,11 @@ body {
   margin-bottom: 0;
 }
 
+.post_subtitle {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .post_info {
   position: relative;
   left: -5%;
@@ -46,4 +51,12 @@ body {
   position: relative;
   left: -5%;
   overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+h3 {
+  margin-bottom: 0;
 }

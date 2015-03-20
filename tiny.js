@@ -102,12 +102,13 @@ function init() {
 function blog() {
   var config = JSON.parse(fs.readFileSync("./tiny.json"));
   prompt.start();
-  prompt.get(["Post Title"], function(err, result) {
+  prompt.get(["Post Title", "Optional Subtitle"], function(err, result) {
     var title = result["Post Title"];
     var fileId = title.replace(/ /g, "-");
 
     config.posts.push({
       title: title,
+      subtitle: result["Optional Subtitle"],
       fileId: fileId,
       content: Import(fileId+".md"),
       date: new Date()
@@ -149,7 +150,8 @@ function publishPage(config, content, extras) {
     config.posts.forEach(function(post) {
       var block = b.replace(/%%TINY_ITERATED_POST_TITLE%%/g, post.title)
         .replace(/%%TINY_ITERATED_POST_DATE%%/g, new Date(post.date).toGMTString())
-        .replace(/%%TINY_ITERATED_POST_HREF%%/g, post.fileId.replace(/[^A-Za-z0-9\-]/g,'')+".html");
+        .replace(/%%TINY_ITERATED_POST_HREF%%/g, post.fileId.replace(/[^A-Za-z0-9\-]/g,'')+".html")
+        .replace(/%%TINY_ITERATED_POST_SUBTITLE%%/g, post.subtitle || "");
       iterated = block + iterated;
     });
 
@@ -185,7 +187,8 @@ function publish() {
         "content": configFile.post,
         "%%TINY_POST_TITLE%%": post.title,
         "%%TINY_POST_CONTENT%%": marked(Resolve(post.content).toString()),
-        "%%TINY_POST_DATE%%": new Date(post.date).toGMTString()
+        "%%TINY_POST_DATE%%": new Date(post.date).toGMTString(),
+        "%%TINY_POST_SUBTITLE%%": post.subtitle || ""
       }
     );
   });
