@@ -76,6 +76,7 @@ function init() {
       header: Import("header.html"),
       footer: Import("footer.html"),
       post: Import("post.html"),
+      index: Import("index.html")
       style: "includes/style.css",
       posts: [],
       raws: []
@@ -84,6 +85,7 @@ function init() {
     fs.mkdirSync("includes");
     fs.writeFileSync("includes/header.html", fs.readFileSync("default/header.html"));
     fs.writeFileSync("includes/footer.html", fs.readFileSync("default/footer.html"));
+    fs.writeFileSync("includes/index.html", fs.readFileSync("default/index.html"));
     fs.writeFileSync("includes/post.html", fs.readFileSync("default/post.html"));
     fs.writeFileSync("includes/style.css", fs.readFileSync("default/style.css"));
 
