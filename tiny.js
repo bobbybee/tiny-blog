@@ -149,8 +149,8 @@ function publishPage(config, content, extras) {
     config.posts.forEach(function(post) {
       var block = b.replace(/%%TINY_ITERATED_POST_TITLE%%/g, post.title)
         .replace(/%%TINY_ITERATED_POST_DATE%%/g, new Date(post.date).toGMTString())
-        .replace(/%%TINY_ITERATED_POST_HREF%%/g, post.fileId+".html");
-      iterated += block;
+        .replace(/%%TINY_ITERATED_POST_HREF%%/g, post.fileId.replace(/[^A-Za-z0-9\-]/g,'')+".html");
+      iterated = block + iterated;
     });
 
     page = page.slice(0, page.indexOf('%%TINY_BEGIN_POST_ITERATION%%'))
@@ -181,7 +181,7 @@ function publish() {
   configFile.posts.forEach(function(post) {
     publishablePages.push(
       {
-        "path": post.fileId+".html",
+        "path": post.fileId.replace(/[^A-Za-z0-9\-]/g,'')+".html",
         "content": configFile.post,
         "%%TINY_POST_TITLE%%": post.title,
         "%%TINY_POST_CONTENT%%": marked(Resolve(post.content).toString()),
