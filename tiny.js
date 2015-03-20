@@ -166,7 +166,7 @@ function publish() {
         "content": configFile.post,
         "%%TINY_POST_TITLE%%": post.title,
         "%%TINY_POST_CONTENT%%": marked(Resolve(post.content).toString()),
-        "%%TINY_POST_DATE%%": post.date
+        "%%TINY_POST_DATE%%": new Date(post.date).toGMTString()
       }
     );
   });
