@@ -62,8 +62,6 @@ function init() {
       /blog/tiny.json -- blog descriptor file
       /blog/includes/
         * - files referenced by descriptor
-          - tiny makes no requirements on what MUST be in here
-          - it is for the benefit of the authoring tool
   */
 
   prompt.start();
@@ -83,11 +81,9 @@ function init() {
     }));
 
     fs.mkdirSync("includes");
-    fs.writeFileSync("includes/header.html", fs.readFileSync("default/header.html"));
-    fs.writeFileSync("includes/footer.html", fs.readFileSync("default/footer.html"));
-    fs.writeFileSync("includes/index.html", fs.readFileSync("default/index.html"));
-    fs.writeFileSync("includes/post.html", fs.readFileSync("default/post.html"));
-    fs.writeFileSync("includes/style.css", fs.readFileSync("default/style.css"));
+    ["header", "footer", "index", "post", "style"].forEach(function(rsrc) {
+      fs.writeFileSync("includes/"+rsrc+".html", fs.readFileSync("default/"+rsrc+".html"));
+    })
 
     // setup git if necessary
     if(result["Git Remote"].length) {
@@ -156,8 +152,8 @@ function publishPage(config, content, extras) {
     });
 
     page = page.slice(0, page.indexOf('%%TINY_BEGIN_POST_ITERATION%%'))
-    + iterated
-    + page.slice(page.indexOf('%%TINY_END_POST_ITERATION%%') + '%%TINY_END_POST_ITERATION%%'.length);
+          + iterated
+          + page.slice(page.indexOf('%%TINY_END_POST_ITERATION%%') + '%%TINY_END_POST_ITERATION%%'.length);
   }
 
   if(config.gitRemote.length) {
@@ -174,10 +170,7 @@ function publish() {
   var configFile = JSON.parse(fs.readFileSync("tiny.json"));
 
   var publishablePages = [
-    {
-      "path":"index.html",
-      "content": configFile.index
-    }
+    { "path": "index.html", "content": configFile.index }
   ];
 
   configFile.posts.forEach(function(post) {
@@ -192,6 +185,7 @@ function publish() {
       }
     );
   });
+
   publishablePages.forEach(function(page) {
     fs.writeFileSync(page.path, publishPage(configFile, page.content, page));
   })
