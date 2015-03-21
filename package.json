@@ -1,0 +1,27 @@
+{
+  "name": "tiny-blog",
+  "version": "0.0.0",
+  "description": "Tiny, static page generator for blogs.",
+  "main": "tiny.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bobbybee/tiny-blog.git"
+  },
+  "keywords": [
+    "blog",
+    "static",
+    "generator"
+  ],
+  "dependencies": {
+    "marked": "~0.3.0",
+    "prompt": "~0.2.0"
+  },
+  "author": "Alyssa Rosenzweig",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bobbybee/tiny-blog/issues"
+  }
+}
